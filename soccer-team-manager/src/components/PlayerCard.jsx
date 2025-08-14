@@ -1,13 +1,24 @@
 import React from "react";
 import { useDraggable } from "@dnd-kit/core";
-import { getPositionColor, initials } from "../utils/playerUtils";
+import { getPositionColor } from "../utils/playerUtils";
 import PlayerTimeBadge from "./PlayerTimeBadge.jsx";
+
+/** Extract first name safely */
+const firstNameOf = (name = "") => {
+  const t = String(name).trim();
+  if (!t) return "";
+  return t.split(/\s+/)[0];
+};
 
 export function PlayerDot({ player, showTimes }) {
   const color = getPositionColor(player.position);
+  const first = firstNameOf(player.name);
+
   return (
     <div className="player-dot" style={{ background: color }}>
-      <div className="player-initials">{initials(player.name)}</div>
+      <div className="player-name" title={player.name}>
+        {first}
+      </div>
       <div className="player-pos">{player.position}</div>
       {showTimes && <PlayerTimeBadge seconds={player.playingTime} />}
     </div>
@@ -20,6 +31,7 @@ export function BenchCard({ player, onEdit, onDelete }) {
     id: player.id,
     data: { from: "bench", playerId: player.id },
   });
+
   return (
     <div
       className="card"

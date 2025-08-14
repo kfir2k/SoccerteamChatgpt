@@ -110,6 +110,7 @@ body {
     }
 }
 
+/* Field wrapper */
 .field-wrap {
     position: relative;
     border-radius: 18px;
@@ -121,16 +122,30 @@ body {
     box-shadow: var(--shadow);
 }
 
-/* PORTRAIT FIELD: 9:16 ratio, BIGGER */
+/* Truly responsive portrait field (9:16) */
+/* Small / narrow screens: width-based, fills viewport width */
 .field {
     position: relative;
-    aspect-ratio: 9 / 16;
-    width: min(820px, 100%);
+    width: min(96vw, 900px);
     height: auto;
+    aspect-ratio: 9 / 16;
+    /* portrait */
     background: #d4f1d6;
     background-size: cover;
     background-position: center;
     margin: 0 auto;
+    max-width: 100%;
+}
+
+/* Tall screens: height-based so the pitch grows and stays tall */
+@media (min-height: 800px) {
+    .field {
+        height: min(88vh, 100dvh - 160px);
+        /* keep header & margins in view */
+        width: auto;
+        /* computed from aspect-ratio */
+        max-width: none;
+    }
 }
 
 .timer-overlay {
@@ -157,10 +172,11 @@ body {
     inset: 0;
 }
 
+/* Smaller player dots (56px) */
 .player-dot {
     position: relative;
-    width: 72px;
-    height: 72px;
+    width: 56px;
+    height: 56px;
     border-radius: 999px;
     display: flex;
     flex-direction: column;
@@ -174,26 +190,31 @@ body {
     touch-action: none;
 }
 
-.player-initials {
-    font-size: 14px;
+/* First name in the dot (tiny, ellipsized) */
+.player-name {
+    font-size: 11px;
     line-height: 1;
     color: #0b0f19;
-    text-shadow: 0 1px 1px rgba(255, 255, 255, 0.6);
+    max-width: 90%;
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
 }
 
 .player-pos {
-    font-size: 11px;
+    font-size: 10px;
     opacity: 0.85;
     color: #0b0f19;
 }
 
+/* Time badge sits just below the circle, adjusted for 56px */
 .badge {
     position: absolute;
     left: 50%;
-    transform: translate(-50%, 42px);
-    padding: 4px 6px;
+    transform: translate(-50%, 32px);
+    padding: 3px 6px;
     border-radius: 8px;
-    font-size: 12px;
+    font-size: 11px;
     font-weight: 700;
     border: 1px solid rgba(0, 0, 0, 0.06);
     box-shadow: var(--shadow);
@@ -300,6 +321,7 @@ body {
     gap: 6px;
 }
 
+/* modal */
 .modal-backdrop {
     position: fixed;
     inset: 0;
@@ -337,11 +359,11 @@ body {
     margin-top: 12px;
 }
 
-/* Drag ghost from bench */
+/* Drag ghost from bench (match 56px dot + border) */
 .drag-ghost {
     position: fixed;
-    width: 72px;
-    height: 72px;
+    width: 56px;
+    height: 56px;
     border-radius: 999px;
     display: grid;
     place-items: center;

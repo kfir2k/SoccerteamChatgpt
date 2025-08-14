@@ -22,7 +22,7 @@ import {
   rectIntersection,
 } from "@dnd-kit/core";
 
-const DOT = 72;
+const DOT = 56;
 
 export default function App() {
   const [players, setPlayers] = useLocalStorage("stm_players", []);
