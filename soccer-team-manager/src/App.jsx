@@ -209,6 +209,14 @@ export default function App() {
     toast.success("Formation saved");
   };
 
+  // Enhanced stop function that resets player times
+  const handleStopTournament = () => {
+    tournament.stop();
+    // Reset all player playing times
+    setPlayers((prev) => prev.map((p) => ({ ...p, playingTime: 0 })));
+    toast.success("Game stopped - All player times reset");
+  };
+
   const benchCount = useMemo(
     () => players.filter((p) => !p.isOnField).length,
     [players]
@@ -230,7 +238,7 @@ export default function App() {
           <div className="header-inner">
             <TournamentButton
               isActive={tournament.isActive}
-              onStop={tournament.stop}
+              onStop={handleStopTournament}
               openSetup={() => setShowSetup(true)}
             />
             <TimesToggle show={showTimes} setShow={setShowTimes} />
@@ -242,6 +250,23 @@ export default function App() {
               onDelete={onDeleteFormation}
             />
             <div className="grow" />
+
+            {/* Tournament Pause/Resume Controls */}
+            {tournament.isActive && (
+              <div className="tournament-controls">
+                <button
+                  className={`btn ${tournament.isPaused ? "primary" : "warn"}`}
+                  onClick={() =>
+                    tournament.isPaused
+                      ? tournament.resume()
+                      : tournament.pause()
+                  }
+                >
+                  {tournament.isPaused ? "▶️ Resume" : "⏸️ Pause"}
+                </button>
+              </div>
+            )}
+
             <div className="flex" style={{ fontSize: 12, opacity: 0.8 }}>
               <div>
                 On Field: <strong>{fieldCount}</strong>

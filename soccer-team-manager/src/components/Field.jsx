@@ -129,6 +129,7 @@ export default function Field({
           <GameTimer
             currentTime={tournament.currentTime}
             gameDuration={tournament.gameDuration}
+            onAddTime={tournament.addTime}
           />
         )}
       </div>

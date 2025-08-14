@@ -39,5 +39,20 @@ export default function useTournamentMode() {
     const pause = useCallback(() => setIsPaused(true), [])
     const resume = useCallback(() => setIsPaused(false), [])
 
-    return { isActive, isPaused, gameDuration, currentTime, start, stop, pause, resume }
+    // Add time to the game duration without stopping the timer
+    const addTime = useCallback((seconds) => {
+        setGameDuration(prev => prev + seconds)
+    }, [])
+
+    return {
+        isActive,
+        isPaused,
+        gameDuration,
+        currentTime,
+        start,
+        stop,
+        pause,
+        resume,
+        addTime
+    }
 }
