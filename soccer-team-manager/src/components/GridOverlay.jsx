@@ -4,7 +4,7 @@ export default function GridOverlay({
   width,
   height,
   show,
-  gridSize = { cols: 8, rows: 6 },
+  gridSize = { cols: 8, rows: 10 },
 }) {
   if (!show) return null;
 
@@ -82,7 +82,7 @@ export function getGridSnapPosition(
   fieldWidth,
   fieldHeight,
   dotSize,
-  gridSize = { cols: 8, rows: 6 }
+  gridSize = { cols: 8, rows: 10 }
 ) {
   const { cols, rows } = gridSize;
   const areaW = Math.max(0, fieldWidth - dotSize);

@@ -1,8 +1,5 @@
 import React, { useState } from "react";
-import {
-  exportFormationAsImage,
-  exportFormationAsPDF,
-} from "../utils/exportUtils";
+import { exportFormationAsImage } from "../utils/exportUtils";
 
 export default function ExportButton({
   fieldRef,
@@ -10,7 +7,6 @@ export default function ExportButton({
   formations,
   selectedFormationId,
 }) {
-  const [showExportMenu, setShowExportMenu] = useState(false);
   const [isExporting, setIsExporting] = useState(false);
 
   const selectedFormation = formations.find(
@@ -18,14 +14,13 @@ export default function ExportButton({
   );
   const formationName = selectedFormation?.name || "Current Formation";
 
-  const handleExport = async (format) => {
+  const handleExport = async () => {
     if (!fieldRef?.current) {
       alert("Field not ready for export");
       return;
     }
 
     setIsExporting(true);
-    setShowExportMenu(false);
 
     try {
       const exportData = {
@@ -35,11 +30,7 @@ export default function ExportButton({
         timestamp: new Date().toLocaleDateString(),
       };
 
-      if (format === "image") {
-        await exportFormationAsImage(exportData);
-      } else if (format === "pdf") {
-        await exportFormationAsPDF(exportData);
-      }
+      await exportFormationAsImage(exportData);
     } catch (error) {
       console.error("Export failed:", error);
       alert("Export failed. Please try again.");
@@ -49,37 +40,13 @@ export default function ExportButton({
   };
 
   return (
-    <div className="export-container">
-      <button
-        className="btn primary"
-        onClick={() => setShowExportMenu(!showExportMenu)}
-        disabled={isExporting}
-      >
-        {isExporting ? "📤 Exporting..." : "📤 Export"}
-      </button>
-
-      {showExportMenu && (
-        <div className="export-menu">
-          <div className="export-header">
-            <strong>Export "{formationName}"</strong>
-          </div>
-          <button
-            className="export-option"
-            onClick={() => handleExport("image")}
-          >
-            🖼️ Save as Image (PNG)
-          </button>
-          <button className="export-option" onClick={() => handleExport("pdf")}>
-            📄 Save as PDF
-          </button>
-          <button
-            className="export-option cancel"
-            onClick={() => setShowExportMenu(false)}
-          >
-            ❌ Cancel
-          </button>
-        </div>
-      )}
-    </div>
+    <button
+      className="btn primary"
+      onClick={handleExport}
+      disabled={isExporting}
+      title={`Export "${formationName}" as image`}
+    >
+      {isExporting ? "📤 Exporting..." : "📤 Export"}
+    </button>
   );
 }

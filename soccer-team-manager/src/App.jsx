@@ -16,7 +16,6 @@ import ExportButton from "./components/ExportButton.jsx";
 import { PlayerDot } from "./components/PlayerCard.jsx";
 import { getPositionColor } from "./utils/playerUtils.js";
 import { getGridSnapPosition } from "./components/GridOverlay.jsx";
-import { loadExportLibraries } from "./utils/exportUtils.js";
 import {
   DndContext,
   PointerSensor,
@@ -37,19 +36,9 @@ export default function App() {
   );
   const [showTimes, setShowTimes] = useLocalStorage("stm_showTimes", true);
   const [showGrid, setShowGrid] = useLocalStorage("stm_showGrid", false);
-  const [exportLibsLoaded, setExportLibsLoaded] = useState(false);
 
   const tournament = useTournamentMode();
   usePlayerTimers(players, setPlayers, tournament);
-
-  // Load export libraries on component mount
-  useEffect(() => {
-    loadExportLibraries()
-      .then(() => setExportLibsLoaded(true))
-      .catch(() =>
-        console.log("Export libraries not loaded - using fallback methods")
-      );
-  }, []);
 
   const [showPlayerForm, setShowPlayerForm] = useState(false);
   const [editTarget, setEditTarget] = useState(null);
