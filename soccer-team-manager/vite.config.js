@@ -4,7 +4,7 @@ import react from '@vitejs/plugin-react'
 export default defineConfig({
   plugins: [react()],
   // Set the base URL for GitHub Pages
-  base: '/soccer-team-manager/', // Replace with your actual repo name
+  base: '/SoccerteamChatgpt/', // Replace with your actual repo name
   // Build configuration for GitHub Pages
   build: {
     outDir: 'dist',
