@@ -65,12 +65,6 @@ body {
     cursor: pointer;
     font-weight: 600;
     box-shadow: var(--shadow);
-    transition: all 0.2s ease;
-}
-
-.btn:hover {
-    transform: translateY(-1px);
-    box-shadow: 0 12px 24px rgba(2, 6, 23, 0.1), 0 4px 8px rgba(2, 6, 23, 0.12);
 }
 
 .btn.primary {
@@ -100,24 +94,10 @@ body {
     box-shadow: var(--shadow);
 }
 
-/* Tournament Controls */
-.tournament-controls {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-}
-
-.tournament-controls .btn {
-    font-size: 14px;
-    padding: 10px 16px;
-    font-weight: 700;
-    border-width: 2px;
-}
-
 .main {
     max-width: 1280px;
     margin: 0 auto;
-    padding: 16px;
+    /* padding: 16px; */
     display: grid;
     gap: 16px;
     grid-template-columns: 1fr;
@@ -153,92 +133,18 @@ body {
     right: 12px;
     top: 12px;
     padding: 10px 12px;
-    background: rgba(255, 255, 255, 0.95);
+    background: rgba(255, 255, 255, 0.85);
     border: 1px solid var(--border);
     border-radius: 12px;
     font-weight: 700;
     color: var(--text);
-    pointer-events: auto;
+    pointer-events: none;
     box-shadow: var(--shadow);
-    backdrop-filter: blur(8px);
-    min-width: 120px;
 }
 
 .subtimer {
     font-size: 12px;
     color: var(--muted);
-}
-
-/* Timer Controls */
-.timer-controls {
-    margin-top: 8px;
-    display: flex;
-    justify-content: center;
-}
-
-.timer-btn {
-    background: rgba(255, 255, 255, 0.9);
-    border: 1px solid var(--border);
-    color: var(--text);
-    padding: 4px 8px;
-    border-radius: 8px;
-    cursor: pointer;
-    font-size: 11px;
-    font-weight: 600;
-    transition: all 0.2s ease;
-}
-
-.timer-btn:hover {
-    background: var(--primary);
-    color: white;
-    transform: translateY(-1px);
-}
-
-.timer-btn.small {
-    padding: 2px 6px;
-    font-size: 10px;
-}
-
-.timer-btn.cancel {
-    background: #ef4444;
-    color: white;
-    border-color: #dc2626;
-}
-
-.timer-btn.cancel:hover {
-    background: #dc2626;
-}
-
-.add-time-panel {
-    display: flex;
-    flex-direction: column;
-    gap: 4px;
-    align-items: center;
-    background: rgba(255, 255, 255, 0.95);
-    padding: 6px;
-    border-radius: 8px;
-    border: 1px solid var(--border);
-    box-shadow: var(--shadow);
-}
-
-.quick-add {
-    display: flex;
-    gap: 4px;
-}
-
-.custom-add {
-    display: flex;
-    gap: 4px;
-    align-items: center;
-}
-
-.timer-input {
-    width: 40px;
-    padding: 2px 4px;
-    border: 1px solid var(--border);
-    border-radius: 4px;
-    font-size: 10px;
-    text-align: center;
 }
 
 .players-layer {

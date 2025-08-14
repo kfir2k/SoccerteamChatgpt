@@ -3,6 +3,7 @@ import { useDroppable, useDraggable } from "@dnd-kit/core";
 import { CSS } from "@dnd-kit/utilities";
 import { PlayerDot } from "./PlayerCard.jsx";
 import GameTimer from "./GameTimer.jsx";
+import GridOverlay from "./GridOverlay.jsx";
 import pitch from "../assets/pitch.jpg";
 
 function DraggableFieldPlayer({ player, showTimes, px, py, dot }) {
@@ -32,6 +33,7 @@ export default function Field({
   showTimes,
   tournament,
   dotSize = 56,
+  showGrid = false,
 }) {
   const fieldPlayers = players.filter((p) => p.isOnField);
   const { setNodeRef } = useDroppable({ id: "field" });
@@ -94,6 +96,14 @@ export default function Field({
           maxWidth: "96vw",
         }}
       >
+        {/* Grid Overlay */}
+        <GridOverlay
+          width={box.width}
+          height={box.height}
+          show={showGrid}
+          gridSize={{ cols: 8, rows: 6 }}
+        />
+
         <div className="players-layer">
           {fieldPlayers.map((p) => {
             // Convert normalized to pixels (fallback to legacy pixel positions if needed)

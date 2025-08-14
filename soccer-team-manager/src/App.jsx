@@ -11,8 +11,10 @@ import PlayerForm from "./components/PlayerForm.jsx";
 import SaveFormationModal from "./components/SaveFormationModal.jsx";
 import TournamentButton from "./components/TournamentButton.jsx";
 import TimesToggle from "./components/TimesToggle.jsx";
+import GridToggle from "./components/GridToggle.jsx";
 import { PlayerDot } from "./components/PlayerCard.jsx";
 import { getPositionColor } from "./utils/playerUtils.js";
+import { getGridSnapPosition } from "./components/GridOverlay.jsx";
 import {
   DndContext,
   PointerSensor,
@@ -32,6 +34,7 @@ export default function App() {
     null
   );
   const [showTimes, setShowTimes] = useLocalStorage("stm_showTimes", true);
+  const [showGrid, setShowGrid] = useLocalStorage("stm_showGrid", false);
 
   const tournament = useTournamentMode();
   usePlayerTimers(players, setPlayers, tournament);
@@ -143,8 +146,26 @@ export default function App() {
       const centerY = r.top + r.height / 2;
       const px = clamp(centerX - rect.left - DOT / 2, 0, areaW);
       const py = clamp(centerY - rect.top - DOT / 2, 0, areaH);
-      const nx = areaW > 0 ? px / areaW : 0;
-      const ny = areaH > 0 ? py / areaH : 0;
+
+      let nx, ny;
+
+      if (showGrid) {
+        // Use grid snapping
+        const gridPos = getGridSnapPosition(
+          px,
+          py,
+          rect.width,
+          rect.height,
+          DOT
+        );
+        nx = gridPos.x;
+        ny = gridPos.y;
+      } else {
+        // Use free positioning
+        nx = areaW > 0 ? px / areaW : 0;
+        ny = areaH > 0 ? py / areaH : 0;
+      }
+
       setPlayers((prev) =>
         prev.map((p) =>
           p.id === id
@@ -166,8 +187,26 @@ export default function App() {
         const startY = data.startY ?? 0;
         const px = clamp(startX + delta.x, 0, areaW);
         const py = clamp(startY + delta.y, 0, areaH);
-        const nx = areaW > 0 ? px / areaW : 0;
-        const ny = areaH > 0 ? py / areaH : 0;
+
+        let nx, ny;
+
+        if (showGrid) {
+          // Use grid snapping
+          const gridPos = getGridSnapPosition(
+            px,
+            py,
+            rect.width,
+            rect.height,
+            DOT
+          );
+          nx = gridPos.x;
+          ny = gridPos.y;
+        } else {
+          // Use free positioning
+          nx = areaW > 0 ? px / areaW : 0;
+          ny = areaH > 0 ? py / areaH : 0;
+        }
+
         setPlayers((prev) =>
           prev.map((p) =>
             p.id === id ? { ...p, fieldPct: { x: nx, y: ny } } : p
@@ -242,6 +281,7 @@ export default function App() {
               openSetup={() => setShowSetup(true)}
             />
             <TimesToggle show={showTimes} setShow={setShowTimes} />
+            <GridToggle show={showGrid} setShow={setShowGrid} />
             <FormationManager
               formations={formations}
               selectedId={selectedFormationId}
@@ -285,6 +325,7 @@ export default function App() {
             showTimes={showTimes}
             tournament={tournament}
             dotSize={DOT}
+            showGrid={showGrid}
           />
           <Bench
             players={players}
