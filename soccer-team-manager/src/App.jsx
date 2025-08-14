@@ -1,4 +1,4 @@
-import React, { useMemo, useRef, useState } from "react";
+import React, { useEffect, useMemo, useRef, useState } from "react";
 import { v4 as uuidv4 } from "uuid";
 import toast, { Toaster } from "react-hot-toast";
 import useLocalStorage from "./hooks/useLocalStorage.js";
@@ -22,7 +22,7 @@ import {
   rectIntersection,
 } from "@dnd-kit/core";
 
-const DOT = 56;
+const DOT = 56; // keep in sync with CSS .player-dot
 
 export default function App() {
   const [players, setPlayers] = useLocalStorage("stm_players", []);
@@ -74,7 +74,7 @@ export default function App() {
           position,
           shirtNumber,
           isOnField: false,
-          fieldPosition: { x: 20, y: 20 },
+          fieldPct: { x: 0.05, y: 0.05 },
           playingTime: 0,
         },
       ]);
@@ -88,18 +88,36 @@ export default function App() {
     setPlayers((prev) => prev.filter((p) => p.id !== id));
   };
 
+  // 🔁 One-time migration: pixel -> normalized positions (so dots resize with field)
+  const migratedRef = useRef(false);
+  useEffect(() => {
+    const el = fieldRef.current;
+    if (!el || migratedRef.current) return;
+    const rect = el.getBoundingClientRect();
+    if (!rect.width || !rect.height) return;
+    const areaW = Math.max(0, rect.width - DOT);
+    const areaH = Math.max(0, rect.height - DOT);
+    setPlayers((prev) =>
+      prev.map((p) => {
+        if (!p.isOnField) return p;
+        if (
+          p.fieldPct &&
+          typeof p.fieldPct.x === "number" &&
+          typeof p.fieldPct.y === "number"
+        )
+          return p;
+        const x = p.fieldPosition?.x ?? 0;
+        const y = p.fieldPosition?.y ?? 0;
+        const nx = areaW > 0 ? Math.max(0, Math.min(1, x / areaW)) : 0;
+        const ny = areaH > 0 ? Math.max(0, Math.min(1, y / areaH)) : 0;
+        return { ...p, fieldPct: { x: nx, y: ny } };
+      })
+    );
+    migratedRef.current = true;
+  }, [setPlayers]);
+
   const getPlayerById = (id) => players.find((p) => p.id === id);
   const activePlayer = activeId ? getPlayerById(activeId) : null;
-
-  const clamp = (x, min, max) => Math.max(min, Math.min(x, max));
-  const clampToField = (x, y) => {
-    const rect = fieldRef.current?.getBoundingClientRect();
-    if (!rect) return { x, y };
-    return {
-      x: clamp(x, 0, rect.width - DOT),
-      y: clamp(y, 0, rect.height - DOT),
-    };
-  };
 
   const onDragStart = (event) => {
     setActiveId(event.active.id);
@@ -114,19 +132,24 @@ export default function App() {
       return;
     }
 
+    const rect = fieldRef.current?.getBoundingClientRect();
+    const areaW = Math.max(0, (rect?.width || 0) - DOT);
+    const areaH = Math.max(0, (rect?.height || 0) - DOT);
+    const clamp = (v, min, max) => Math.max(min, Math.min(v, max));
+
     if (data.from === "bench" && over.id === "field") {
-      // Place where dropped (center of dragged rect inside field)
-      const fieldRect = fieldRef.current.getBoundingClientRect();
       const r = active.rect.current.translated || active.rect.current.initial;
       const centerX = r.left + r.width / 2;
       const centerY = r.top + r.height / 2;
-      const pos = clampToField(
-        centerX - fieldRect.left - DOT / 2,
-        centerY - fieldRect.top - DOT / 2
-      );
+      const px = clamp(centerX - rect.left - DOT / 2, 0, areaW);
+      const py = clamp(centerY - rect.top - DOT / 2, 0, areaH);
+      const nx = areaW > 0 ? px / areaW : 0;
+      const ny = areaH > 0 ? py / areaH : 0;
       setPlayers((prev) =>
         prev.map((p) =>
-          p.id === id ? { ...p, isOnField: true, fieldPosition: pos } : p
+          p.id === id
+            ? { ...p, isOnField: true, fieldPct: { x: nx, y: ny } }
+            : p
         )
       );
       toast.success("On field");
@@ -141,9 +164,14 @@ export default function App() {
       } else if (over.id === "field") {
         const startX = data.startX ?? 0;
         const startY = data.startY ?? 0;
-        const pos = clampToField(startX + delta.x, startY + delta.y);
+        const px = clamp(startX + delta.x, 0, areaW);
+        const py = clamp(startY + delta.y, 0, areaH);
+        const nx = areaW > 0 ? px / areaW : 0;
+        const ny = areaH > 0 ? py / areaH : 0;
         setPlayers((prev) =>
-          prev.map((p) => (p.id === id ? { ...p, fieldPosition: pos } : p))
+          prev.map((p) =>
+            p.id === id ? { ...p, fieldPct: { x: nx, y: ny } } : p
+          )
         );
       }
     }
@@ -231,6 +259,7 @@ export default function App() {
             fieldRef={fieldRef}
             showTimes={showTimes}
             tournament={tournament}
+            dotSize={DOT}
           />
           <Bench
             players={players}
@@ -272,7 +301,7 @@ export default function App() {
 
       <DragOverlay dropAnimation={null}>
         {activePlayer ? (
-          <div style={{ width: 56, height: 56 }}>
+          <div style={{ width: DOT, height: DOT }}>
             <PlayerDot player={activePlayer} showTimes={false} />
           </div>
         ) : null}

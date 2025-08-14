@@ -1,25 +1,20 @@
-import React, { useEffect, useMemo, useRef, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import { useDroppable, useDraggable } from "@dnd-kit/core";
 import { CSS } from "@dnd-kit/utilities";
 import { PlayerDot } from "./PlayerCard.jsx";
 import GameTimer from "./GameTimer.jsx";
 import pitch from "../assets/pitch.jpg";
 
-function DraggableFieldPlayer({ player, showTimes }) {
+function DraggableFieldPlayer({ player, showTimes, px, py, dot }) {
   const { attributes, listeners, setNodeRef, transform, isDragging } =
     useDraggable({
       id: player.id,
-      data: {
-        from: "field",
-        playerId: player.id,
-        startX: player.fieldPosition.x,
-        startY: player.fieldPosition.y,
-      },
+      data: { from: "field", playerId: player.id, startX: px, startY: py },
     });
   const style = {
     position: "absolute",
-    left: player.fieldPosition.x,
-    top: player.fieldPosition.y,
+    left: px,
+    top: py,
     transform: transform ? CSS.Translate.toString(transform) : undefined,
     zIndex: isDragging ? 1000 : "auto",
     touchAction: "none",
@@ -31,11 +26,17 @@ function DraggableFieldPlayer({ player, showTimes }) {
   );
 }
 
-export default function Field({ players, fieldRef, showTimes, tournament }) {
+export default function Field({
+  players,
+  fieldRef,
+  showTimes,
+  tournament,
+  dotSize = 56,
+}) {
   const fieldPlayers = players.filter((p) => p.isOnField);
   const { setNodeRef } = useDroppable({ id: "field" });
 
-  // 1) Read the real image aspect ratio once
+  // Read image aspect ratio once
   const [ratio, setRatio] = useState(9 / 16);
   useEffect(() => {
     const img = new Image();
@@ -46,9 +47,7 @@ export default function Field({ players, fieldRef, showTimes, tournament }) {
     };
   }, []);
 
-  // 2) Compute a box that never exceeds width OR height limits
-  //    width <= 96vw (capped at 1040px)
-  //    height <= min(90% of visual viewport height, visualHeight - 160px)
+  // Compute a best-fit box that respects both width & height caps (prevents side-cuts on tall phones)
   const [box, setBox] = useState({ width: 320, height: 320 / (9 / 16) });
   const recalc = useMemo(() => {
     return () => {
@@ -56,7 +55,6 @@ export default function Field({ players, fieldRef, showTimes, tournament }) {
       const vh = window.visualViewport?.height || window.innerHeight;
       const maxW = Math.min(1040, vw * 0.96);
       const maxH = Math.max(260, Math.min(vh * 0.9, vh - 160));
-      // Candidate width if we try to use the max height
       const wFromH = ratio * maxH;
       const width = Math.min(maxW, wFromH);
       const height = width / ratio;
@@ -75,6 +73,9 @@ export default function Field({ players, fieldRef, showTimes, tournament }) {
     };
   }, [recalc]);
 
+  const areaW = Math.max(0, box.width - dotSize);
+  const areaH = Math.max(0, box.height - dotSize);
+
   return (
     <div className="field-wrap">
       <div
@@ -87,16 +88,42 @@ export default function Field({ players, fieldRef, showTimes, tournament }) {
           width: box.width + "px",
           height: box.height + "px",
           backgroundImage: `url(${pitch})`,
-          backgroundSize: "100% 100%", // contain exactly, no cropping
+          backgroundSize: "100% 100%", // no cropping
           backgroundPosition: "center",
           backgroundRepeat: "no-repeat",
-          maxWidth: "96vw", // extra safety for very small gutters
+          maxWidth: "96vw",
         }}
       >
         <div className="players-layer">
-          {fieldPlayers.map((p) => (
-            <DraggableFieldPlayer key={p.id} player={p} showTimes={showTimes} />
-          ))}
+          {fieldPlayers.map((p) => {
+            // Convert normalized to pixels (fallback to legacy pixel positions if needed)
+            const hasPct =
+              p.fieldPct &&
+              typeof p.fieldPct.x === "number" &&
+              typeof p.fieldPct.y === "number";
+            const nx = hasPct
+              ? p.fieldPct.x
+              : areaW > 0
+              ? (p.fieldPosition?.x || 0) / areaW
+              : 0;
+            const ny = hasPct
+              ? p.fieldPct.y
+              : areaH > 0
+              ? (p.fieldPosition?.y || 0) / areaH
+              : 0;
+            const px = Math.max(0, Math.min(nx * areaW, areaW));
+            const py = Math.max(0, Math.min(ny * areaH, areaH));
+            return (
+              <DraggableFieldPlayer
+                key={p.id}
+                player={p}
+                showTimes={showTimes}
+                px={px}
+                py={py}
+                dot={dotSize}
+              />
+            );
+          })}
         </div>
         {tournament.isActive && (
           <GameTimer
