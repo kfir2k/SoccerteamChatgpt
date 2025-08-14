@@ -121,25 +121,11 @@ body {
     box-shadow: var(--shadow);
 }
 
-/* Field sizing: width-driven on small screens; height-driven on tall screens. Aspect ratio will be overridden inline to match the image. */
+/* Field base — dimensions now computed inline to prevent cropping on very tall devices */
 .field {
     position: relative;
-    width: min(96vw, 1040px);
-    height: auto;
-    aspect-ratio: 9 / 16;
     background: #d4f1d6;
-    background-size: cover;
-    background-position: center;
     margin: 0 auto;
-    max-width: 100%;
-}
-
-@media (min-height: 800px) {
-    .field {
-        height: min(90vh, 100dvh - 160px);
-        width: auto;
-        max-width: none;
-    }
 }
 
 .timer-overlay {
