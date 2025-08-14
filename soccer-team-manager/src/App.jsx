@@ -272,7 +272,7 @@ export default function App() {
 
       <DragOverlay dropAnimation={null}>
         {activePlayer ? (
-          <div style={{ width: 64, height: 64 }}>
+          <div style={{ width: 56, height: 56 }}>
             <PlayerDot player={activePlayer} showTimes={false} />
           </div>
         ) : null}

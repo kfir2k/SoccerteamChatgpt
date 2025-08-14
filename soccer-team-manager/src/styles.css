@@ -110,7 +110,6 @@ body {
     }
 }
 
-/* Field wrapper */
 .field-wrap {
     position: relative;
     border-radius: 18px;
@@ -122,14 +121,12 @@ body {
     box-shadow: var(--shadow);
 }
 
-/* Truly responsive portrait field (9:16) */
-/* Small / narrow screens: width-based, fills viewport width */
+/* Field sizing: width-driven on small screens; height-driven on tall screens. Aspect ratio will be overridden inline to match the image. */
 .field {
     position: relative;
-    width: min(96vw, 900px);
+    width: min(96vw, 1040px);
     height: auto;
     aspect-ratio: 9 / 16;
-    /* portrait */
     background: #d4f1d6;
     background-size: cover;
     background-position: center;
@@ -137,13 +134,10 @@ body {
     max-width: 100%;
 }
 
-/* Tall screens: height-based so the pitch grows and stays tall */
 @media (min-height: 800px) {
     .field {
-        height: min(88vh, 100dvh - 160px);
-        /* keep header & margins in view */
+        height: min(90vh, 100dvh - 160px);
         width: auto;
-        /* computed from aspect-ratio */
         max-width: none;
     }
 }
@@ -172,7 +166,6 @@ body {
     inset: 0;
 }
 
-/* Smaller player dots (56px) */
 .player-dot {
     position: relative;
     width: 56px;
@@ -190,7 +183,6 @@ body {
     touch-action: none;
 }
 
-/* First name in the dot (tiny, ellipsized) */
 .player-name {
     font-size: 11px;
     line-height: 1;
@@ -207,7 +199,6 @@ body {
     color: #0b0f19;
 }
 
-/* Time badge sits just below the circle, adjusted for 56px */
 .badge {
     position: absolute;
     left: 50%;
@@ -321,7 +312,6 @@ body {
     gap: 6px;
 }
 
-/* modal */
 .modal-backdrop {
     position: fixed;
     inset: 0;
@@ -359,7 +349,7 @@ body {
     margin-top: 12px;
 }
 
-/* Drag ghost from bench (match 56px dot + border) */
+/* Drag ghost from bench */
 .drag-ghost {
     position: fixed;
     width: 56px;
