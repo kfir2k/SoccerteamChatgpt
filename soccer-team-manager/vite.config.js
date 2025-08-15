@@ -1,17 +1,16 @@
+// vite.config.js
 import { defineConfig } from 'vite'
 import react from '@vitejs/plugin-react'
 
 export default defineConfig({
   plugins: [react()],
-  // Set the base URL for GitHub Pages
-  base: '/SoccerteamChatgpt/', // Replace with your actual repo name
-  // Build configuration for GitHub Pages
+  base: '/SoccerteamChatgpt/', // keep or set '/' if repo is USERNAME.github.io
   build: {
-    outDir: 'dist',
+    outDir: 'docs',
     assetsDir: 'assets',
-    // Generate source maps for debugging
+    emptyOutDir: true,
     sourcemap: false,
-    // Optimize for production
-    minify: 'terser',
+    // tip: default 'esbuild' is faster; 'terser' is okay if you need it
+    // minify: 'terser',
   },
 })
