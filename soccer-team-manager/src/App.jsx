@@ -339,6 +339,7 @@ export default function App() {
             onEdit={onEditPlayer}
             onDelete={deletePlayer}
             onAddClick={onAddPlayer}
+            isDragging={!!activeId}
           />
         </main>
 

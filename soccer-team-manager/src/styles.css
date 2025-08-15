@@ -116,12 +116,13 @@ body {
 
 .main {
     max-width: 1280px;
-    margin: 0 auto;
-    /* padding: 16px; */
+    margin: 20px;
+    padding: 16px;
     display: grid;
     gap: 16px;
     grid-template-columns: 1fr;
     align-items: start;
+    justify-content: center
 }
 
 @media (min-width: 1024px) {
@@ -133,7 +134,7 @@ body {
 .field-wrap {
     position: relative;
     border-radius: 18px;
-    overflow: hidden;
+    /* overflow: hidden; */
     border: 1px solid var(--border);
     display: flex;
     justify-content: center;
@@ -440,4 +441,99 @@ body {
     pointer-events: none;
     border: 3px solid rgba(255, 255, 255, 0.9);
     box-shadow: var(--shadow);
+}
+
+/* Drop Zone Styles */
+.bench {
+    position: relative;
+    transition: all 0.3s ease;
+}
+
+/* Ready state - shown when dragging starts */
+.bench-drop-ready {
+    border: 2px dashed #94a3b8;
+    border-radius: 18px;
+    background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
+}
+
+/* Active state - shown when hovering over bench */
+.bench-drop-active {
+    border: 3px dashed #0ea5e9;
+    background: linear-gradient(135deg, #f0f9ff 0%, #e0f2fe 100%);
+    transform: scale(1.01);
+    box-shadow: 0 10px 20px rgba(14, 165, 233, 0.15);
+}
+
+.drop-zone-indicator {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    z-index: 10;
+    pointer-events: none;
+    opacity: 0.8;
+    transition: all 0.3s ease;
+}
+
+.drop-zone-indicator.drop-zone-active {
+    opacity: 1;
+    transform: translate(-50%, -50%) scale(1.1);
+}
+
+.drop-zone-content {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+    background: rgba(255, 255, 255, 0.95);
+    padding: 16px 24px;
+    border-radius: 12px;
+    border: 2px solid #94a3b8;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    transition: all 0.3s ease;
+}
+
+.drop-zone-active .drop-zone-content {
+    border-color: #0ea5e9;
+    box-shadow: 0 8px 20px rgba(14, 165, 233, 0.2);
+}
+
+.drop-zone-icon {
+    font-size: 24px;
+    transition: all 0.3s ease;
+}
+
+.drop-zone-active .drop-zone-icon {
+    animation: bounceIcon 1s infinite;
+    font-size: 28px;
+}
+
+.drop-zone-text {
+    font-weight: 600;
+    color: #64748b;
+    font-size: 13px;
+    white-space: nowrap;
+    transition: color 0.3s ease;
+}
+
+.drop-zone-active .drop-zone-text {
+    color: #0369a1;
+    font-weight: 700;
+}
+
+.bench-list-dropping {
+    opacity: 0.6;
+    transition: opacity 0.3s ease;
+}
+
+@keyframes bounceIcon {
+
+    0%,
+    100% {
+        transform: translateY(0);
+    }
+
+    50% {
+        transform: translateY(-4px);
+    }
 }
